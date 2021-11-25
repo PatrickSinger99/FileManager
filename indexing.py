@@ -2,6 +2,7 @@ import os
 import time
 from lxml import etree as ET
 from os.path import join, isfile, splitext, getsize, getmtime
+import canny_detection
 
 
 def parse_folder(folder_path, parent_element):
@@ -16,10 +17,11 @@ def parse_folder(folder_path, parent_element):
 
         if isfile(join(folder_path, file)):
             ET.SubElement(files_element, "file",
+                          name=file,
                           type=splitext(file)[-1][1:].upper(),
                           size=str(getsize(join(folder_path, file))),
                           modified=str(time.ctime(getmtime(join(folder_path, file))))
-                          ).text = file
+                          ).text = canny_detection.get_canny_from_img(join(folder_path, file))
 
             file_count += 1
 
@@ -51,5 +53,24 @@ def create_master_data_xml(path):
         print("(!) Failed to create master data file")
 
 
+def get_master_data_file_count(file_type=""):
+    data = ET.parse("master_data.xml")
+    count = 0
+
+    if file_type == "":
+        for elem in data.iter():
+            if elem.tag == "folder":
+                count += int(elem.get("file_count"))
+
+    else:
+        for elem in data.iter():
+            if elem.tag == "file":
+                if elem.get("type") == file_type.upper():
+                    count += 1
+
+    return count
+
+
 if __name__ == "__main__":
-    create_master_data_xml(r"E:\=Eigene Dateien=")
+    # create_master_data_xml(r"E:\=Eigene Dateien=\Bilder\Verschiedene Bilder\Whats App\Bilder")
+    print(get_master_data_file_count("jpeg"))
