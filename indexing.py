@@ -21,6 +21,7 @@ def parse_folder(folder_path, parent_element):
                           type=splitext(file)[-1][1:].upper(),
                           size=str(getsize(join(folder_path, file))),
                           modified=str(time.ctime(getmtime(join(folder_path, file)))),
+                          compared="0",
                           full_path=str(join(folder_path, file))
                           ).text = canny_detection.get_canny_from_img(join(folder_path, file))
 
@@ -108,6 +109,23 @@ def fetch_changes():
                         parent = elem.getparent()
                         parent.remove(elem)
                         removed_files += 1
+
+        # Check for new files in system path
+        root = data.getroot()
+        folder_path = data.getroot().get("path")
+        folder_content = os.listdir(folder_path)
+
+        # Get all elements in xml folder
+        all_xml_folder_content = []
+        for file in root.find("files"):
+            all_xml_folder_content.append(file.get("full_path"))
+        for folder in root.find("folders"):
+            all_xml_folder_content.append(folder.get("full_path"))
+
+
+        for element in folder_content:
+            if join(folder_path, element) not in all_xml_folder_content:
+                pass
 
         # Save new master file
         data.write("master_data.xml", encoding='utf-8', xml_declaration=True, pretty_print=True)
