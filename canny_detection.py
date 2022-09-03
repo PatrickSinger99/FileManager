@@ -28,7 +28,7 @@ def get_canny_from_img(path):
         if path.split(".")[-1].lower() in valid_images:
             return_str = ""
 
-            np_array = canny(reformat(cv.imread(path), (35, 35)))
+            np_array = canny(reformat(cv.imread(path), compute_size))
             for row in np_array:
                 for pixel in row:
                     if pixel == 255:
@@ -41,3 +41,6 @@ def get_canny_from_img(path):
             return return_str
     except:
         return "None"
+
+
+print(get_canny_from_img("test (1).jpg"))

@@ -6,7 +6,12 @@ import canny_detection
 
 
 def parse_folder(folder_path, parent_element):
-    folder_content = os.listdir(folder_path)
+    try:
+        folder_content = os.listdir(folder_path)
+    except FileNotFoundError:
+        print("    (!) Skipped " + folder_path + " because file name exceeded length limit")
+        return
+
     file_count = 0
     subfolder_count = 0
 
@@ -122,7 +127,6 @@ def fetch_changes():
         for folder in root.find("folders"):
             all_xml_folder_content.append(folder.get("full_path"))
 
-
         for element in folder_content:
             if join(folder_path, element) not in all_xml_folder_content:
                 pass
@@ -152,5 +156,5 @@ def fetch_changes():
 
 
 if __name__ == "__main__":
-    # create_master_data_xml(r"C:\Users\patri\Documents\GitHub\FileManager\test_data")
-    fetch_changes()
+    create_master_data_xml(r"E:\=Eigene Dateien=\Bilder\Verschiedene Bilder\xd")
+    # fetch_changes()
